@@ -1,0 +1,22 @@
+{
+  "name": "express-i-ms-cli",
+  "type": "module",
+  "version": "1.0.7",
+  "description": "CLI for generating Express.js projects",
+  "main": "index.js",
+  "bin": {
+    "express-i-ms": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "figlet": "^1.5.2",
+    "inquirer": "^8.2.0",
+    "mkdirp": "^1.0.4",
+    "yargs": "^17.3.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,147 @@
+#!/usr/bin/env node
+
+import inquirer from 'inquirer';
+import fs from 'fs';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import chalk from 'chalk';
+
+import figlet from 'figlet';
+import { execSync } from 'child_process';
+
+function logError(error) {
+  console.error(chalk.red(error));
+}
+
+function logSuccess(message) {
+  console.log(chalk.green(message));
+}
+
+function createFile(filePath, content) {
+  try {
+    fs.writeFileSync(filePath, content, 'utf8');
+    logSuccess(`Created ${filePath}`);
+  } catch (error) {
+    logError(`Error creating ${filePath}: ${error.message}`);
+  }
+}
+
+async function main() {
+  console.log(chalk.blue(figlet.textSync('Express CLI')));
+
+  const answers = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'language',
+      message: 'Select the language:',
+      choices: ['TypeScript', 'JavaScript'],
+    },
+    {
+      type: 'confirm',
+      name: 'envFile',
+      message: 'Do you want an .env file?',
+      default: true,
+    },
+    {
+      type: 'confirm',
+      name: 'enableCors',
+      message: 'Enable CORS?',
+      default: true,
+    },
+    {
+      type: 'confirm',
+      name: 'database',
+      message: 'Set up a basic database connection?',
+      default: false,
+    },
+  ]);
+
+  const { language, envFile, enableCors, database } = answers;
+  const ext = language === 'TypeScript' ? 'ts' : 'js';
+
+  // Create project structure
+  const folders = ['db', 'middlewares', 'routes', 'controllers', 'models'];
+  folders.forEach((folder) => mkdirp.sync(folder));
+
+  // Create app file
+  let appContent = `
+    const express = require('express');
+    ${database ? "const mongoose = require('mongoose');\n" : ''}
+    ${enableCors ? "const cors = require('cors');" : ''}
+    const app = express();
+
+    ${enableCors ? "app.use(cors());" : ''}
+    app.use(express.json());
+
+    app.get('/', (req, res) => res.send('Hello World!'));
+
+    ${database ? `const dbURI = process.env.DB_URI || 'mongodb://localhost:27017/myapp';
+    mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+      .then(() => console.log('Database connected'))
+      .catch(err => console.log('Database connection error:', err));` : ''}
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(\`Server running on port \${PORT}\`));
+  `;
+
+  createFile(path.join(process.cwd(), `app.${ext}`), appContent);
+
+  // Create .env file
+  if (envFile) {
+    createFile(path.join(process.cwd(), '.env'), `PORT=3000\n${database ? 'DB_URI=mongodb://localhost:27017/myapp\n' : ''}`);
+  }
+
+  // Add or update package.json
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  let packageJson = {};
+  if (fs.existsSync(packageJsonPath)) {
+    try {
+      packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    } catch (error) {
+      logError(`Error reading ${packageJsonPath}: ${error.message}`);
+    }
+  } else {
+    packageJson = {
+      name: "my-express-app",
+      version: "1.0.0",
+      main: `app.${ext}`,
+      scripts: {},
+      dependencies: {},
+    };
+  }
+
+  packageJson.scripts = {
+    start: `node app.${ext}`,
+    ...(language === 'TypeScript' && { dev: `ts-node-dev app.ts` }),
+  };
+
+  // Add dependencies
+  packageJson.dependencies.express = "^4.17.1";
+  if (enableCors) {
+    packageJson.dependencies.cors = "^2.8.5";
+  }
+  if (database) {
+    packageJson.dependencies.mongoose = "^5.13.3";
+  }
+
+  try {
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+    logSuccess(`Updated ${packageJsonPath}`);
+  } catch (error) {
+    logError(`Error updating ${packageJsonPath}: ${error.message}`);
+  }
+
+  // Install dependencies
+  console.log(chalk.blue("Installing dependencies..."));
+  try {
+    execSync('npm install', { stdio: 'inherit' });
+    logSuccess('Dependencies installed');
+  } catch (error) {
+    logError(`Error installing dependencies: ${error.message}`);
+  }
+  // Message after installation
+  console.log(`To run the server, use: node app.${ext}`);
+  console.log(`Don't forget to update the DB URL in the .env file :) `);
+}
+
+main().catch((err) => logError(`Unhandled error: ${err.message}`));
