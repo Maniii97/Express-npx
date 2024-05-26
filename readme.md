@@ -1,4 +1,4 @@
-# express-i-ms-cli
+# Express CLI
 
 ![Express](https://img.shields.io/badge/Express.js-^4.17.1-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-^4.5.4-blue.svg)
