@@ -8,6 +8,7 @@ import chalk from 'chalk';
 
 import figlet from 'figlet';
 import { execSync } from 'child_process';
+import ts from 'typescript';
 
 function logError(error) {
   console.error(chalk.red(error));
@@ -65,19 +66,7 @@ async function main() {
   const { language, envFile, enableCors, database, gitignore } = answers;
   const ext = language === 'TypeScript' ? 'ts' : 'js';
   
-  let tsConfig = false;
-
-  if(language === 'TypeScript') {
-    tsConfigAnswer = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'tsConfig',
-        message: 'Do you want to create a tsconfig.json file?',
-        default: false,
-      }
-    ])
-    tsConfig = tsConfigAnswer.tsConfig;
-  }
+  const tsConfig = language === 'TypeScript' ? true : false;
 
   // Create project structure
   const folders = ['db', 'middlewares', 'routes', 'controllers', 'models'];
