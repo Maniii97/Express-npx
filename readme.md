@@ -30,3 +30,7 @@ npx express-i-ms
 - Option to include .gitignore file.
 - Option to get ts-config.json file.
 - Option to use nodemon.
+
+
+
+Feel free to raise an issue and contribute to this package  [Github][https://github.com/Maniii97/Express-npx]
