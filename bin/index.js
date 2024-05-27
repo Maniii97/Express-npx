@@ -54,10 +54,29 @@ async function main() {
       message: 'Set up a basic database connection?',
       default: false,
     },
+    {
+      type: 'confirm',
+      name: 'gitignore',
+      message: 'Create a .gitignore file?',
+      default: true,
+    }
   ]);
 
-  const { language, envFile, enableCors, database } = answers;
+  const { language, envFile, enableCors, database, gitignore } = answers;
   const ext = language === 'TypeScript' ? 'ts' : 'js';
+  
+  let tsConfig = false;
+
+  if(language === 'TypeScript') {
+    tsConfig = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'tsConfig',
+        message: 'Do you want to create a tsconfig.json file?',
+        default: false,
+      }
+    ]).tsConfig;
+  }
 
   // Create project structure
   const folders = ['db', 'middlewares', 'routes', 'controllers', 'models'];
@@ -89,6 +108,11 @@ async function main() {
   // Create .env file
   if (envFile) {
     createFile(path.join(process.cwd(), '.env'), `PORT=3000\n${database ? 'DB_URI=mongodb://localhost:27017/myapp\n' : ''}`);
+  }
+
+  // Create gitignore file
+  if (gitignore) {
+    createFile(path.join(process.cwd(), '.gitignore'), 'node_modules');
   }
 
   // Add or update package.json
@@ -135,6 +159,7 @@ async function main() {
   console.log(chalk.blue("Installing dependencies..."));
   try {
     execSync('npm install', { stdio: 'inherit' });
+    if(tsConfig) execSync('npx tsc --init', { stdio: 'inherit' })
     logSuccess('Dependencies installed');
   } catch (error) {
     logError(`Error installing dependencies: ${error.message}`);
