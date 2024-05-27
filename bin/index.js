@@ -68,14 +68,15 @@ async function main() {
   let tsConfig = false;
 
   if(language === 'TypeScript') {
-    tsConfig = await inquirer.prompt([
+    tsConfigAnswer = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'tsConfig',
         message: 'Do you want to create a tsconfig.json file?',
         default: false,
       }
-    ]).tsConfig;
+    ])
+    tsConfig = tsConfigAnswer.tsConfig;
   }
 
   // Create project structure
