@@ -16,7 +16,7 @@ To install :
 npm i express-i-ms-cli
 ```
 
-Run the following command to get the boilerplate express app with MVC architecture pattern and boilerplate code
+Run the following command to get the boilerplate express app with MVC architecture pattern.
 ```bash
 npx express-i-ms
 ```
@@ -27,4 +27,5 @@ npx express-i-ms
 - Option to include an .env file for environment variables.
 - Option to enable CORS (Cross-Origin Resource Sharing).
 - Set up a basic database connection with MongoDB.
+- Option to include .gitignore file.
 
