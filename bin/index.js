@@ -7,7 +7,7 @@ import mkdirp from 'mkdirp';
 import chalk from 'chalk';
 
 import figlet from 'figlet';
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import ts from 'typescript';
 
 function logError(error) {
@@ -60,16 +60,34 @@ async function main() {
       name: 'gitignore',
       message: 'Create a .gitignore file?',
       default: true,
+    },
+    {
+      type: 'confirm',
+      name: 'nodemon',
+      message: 'Do you want to use nodemon?',
+      default: false,
     }
   ]);
 
-  const { language, envFile, enableCors, database, gitignore } = answers;
+  const { language, envFile, enableCors, database, gitignore, nodemon } = answers;
   const ext = language === 'TypeScript' ? 'ts' : 'js';
+
+  let tsConfig = false;
   
-  const tsConfig = language === 'TypeScript' ? true : false;
+  if(language === 'TypeScript') {
+    const tsConfigAnswer = await inquirer.prompt([
+      {
+        type : 'confirm',
+        name : 'tsConfig',
+        message : 'Do you want to create a tsconfig.json file?',
+        default : false
+      }
+    ])
+    tsConfig = tsConfigAnswer.tsConfig;
+  }
 
   // Create project structure
-  const folders = ['db', 'middlewares', 'routes', 'controllers', 'models'];
+  const folders = ['configs', 'middlewares', 'routes', 'controllers', 'models'];
   folders.forEach((folder) => mkdirp.sync(folder));
 
   // Create app file
@@ -82,7 +100,7 @@ async function main() {
     ${enableCors ? "app.use(cors());" : ''}
     app.use(express.json());
 
-    app.get('/', (req, res) => res.send('Hello World!'));
+    app.get('/', (req, res) => res.send('Hello World!, This was created using Express CLI'));
 
     ${database ? `const dbURI = process.env.DB_URI || 'mongodb://localhost:27017/myapp';
     mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -97,12 +115,12 @@ async function main() {
 
   // Create .env file
   if (envFile) {
-    createFile(path.join(process.cwd(), '.env'), `PORT=3000\n${database ? 'DB_URI=mongodb://localhost:27017/myapp\n' : ''}`);
+    createFile(path.join(process.cwd(), '.env'), `PORT = 3000\n${database ? 'DB_URI = mongodb://localhost:27017/myapp\n' : ''}`);
   }
 
   // Create gitignore file
   if (gitignore) {
-    createFile(path.join(process.cwd(), '.gitignore'), 'node_modules');
+    createFile(path.join(process.cwd(), '.gitignore'), 'node_modules\n.env\npackage-lock.json\n');
   }
 
   // Add or update package.json
@@ -126,7 +144,8 @@ async function main() {
 
   packageJson.scripts = {
     start: `node app.${ext}`,
-    ...(language === 'TypeScript' && { dev: `ts-node-dev app.ts` }),
+    ...(language === 'TypeScript' && { dev: `ts-node app.ts` }),
+    ...(nodemon && { dev: `npx nodemon app.${ext}` })
   };
 
   // Add dependencies
@@ -149,13 +168,25 @@ async function main() {
   console.log(chalk.blue("Installing dependencies..."));
   try {
     execSync('npm install', { stdio: 'inherit' });
+    execSync('npm install express', { stdio: 'inherit' });
+    
+    if(nodemon) execSync('npm install nodemon', { stdio: 'inherit' });
+
+    if(language === 'TypeScript') execSync('npm install --save-dev typescript ts-node', { stdio: 'inherit' });
+
+    if(envFile) execSync('npm install dotenv', { stdio: 'inherit' });
+
     if(tsConfig) execSync('npx tsc --init', { stdio: 'inherit' })
+
     logSuccess('Dependencies installed');
   } catch (error) {
     logError(`Error installing dependencies: ${error.message}`);
   }
   // Message after installation
   console.log(`To run the server, use: node app.${ext}`);
+
+  if(nodemon) console.log(`To run the server in development mode, use: npm run dev`);
+
   console.log(`Don't forget to update the DB URL in the .env file :) `);
 }
 
