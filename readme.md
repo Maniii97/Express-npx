@@ -40,9 +40,10 @@ npx express-i-ms
 ```
 ## This will make your app in this format:
 
-your-project-name/
+\`\`\`
+${projectName}/
 ├── src/
-│   ├── app.ts
+│   ├── app.${ext}
 │   ├── routes/
 │   ├── controllers/
 │   ├── models/
@@ -51,9 +52,11 @@ your-project-name/
 ├── .dockerignore
 ├── .gitignore
 ├── Dockerfile
+├── LICENSE
 ├── README.md
 ├── package.json
-├── tsconfig.json
+${language === 'TypeScript' ? '├── tsconfig.json\n' : ''}
+\`\`\`
 
 
 ## Features
