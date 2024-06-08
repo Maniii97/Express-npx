@@ -52,7 +52,6 @@ projectName/
 ├── .dockerignore
 ├── .gitignore
 ├── Dockerfile
-├── LICENSE
 ├── README.md
 ├── package.json
 ├── tsconfig.json
