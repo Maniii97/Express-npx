@@ -41,7 +41,7 @@ npx express-i-ms
 ## This is how your project structure will look like:
 
 ```
-${projectName}/
+projectName/
 ├── src/
 │   ├── app.ts
 │   ├── routes/
