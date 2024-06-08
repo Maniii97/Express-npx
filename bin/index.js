@@ -186,7 +186,10 @@ async function main() {
     }
 
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(\`Server running on port \${PORT}\`));
+    app.listen(PORT, () =>{
+      console.log(\`Server running on port \${PORT}\`);
+      console.log(\`http://localhost:\${PORT}\`); 
+    });
   `;
 
   createFile(path.join(projectDir, `src/app.${ext}`), appContent);
@@ -336,17 +339,17 @@ async function main() {
   if (tsConfig) {
     try {
       execSync("npx tsc --init", { stdio: "inherit", cwd: projectDir });
-      logSuccess("TypeScript configuration file created");
+      logSuccess("TypeScript configuration file created\n");
     } catch (error) {
       logError(`Error creating TypeScript configuration: ${error.message}`);
     }
   }
   // Message after installation
-  console.log(`To run the server, use: node src/app.${ext}\n`);
+  console.log(`To run the server, use: node src/app.${ext}`);
 
-  if (nodemon) console.log(`To run the server in development mode, use: npm run dev`);
+  if (nodemon) console.log(`To run the server in development mode (nodemon), use: npm run dev`);
 
-  console.log(`Don't forget to update the DB URL in the .env file :)`);
+  console.log(`\nDon't forget to update the DB URL in the .env file, Happy coding :)\n`);
 }
 
 main().catch((err) => logError(`Unhandled error: ${err.message}`));
