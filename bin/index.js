@@ -317,6 +317,7 @@ async function main() {
     };
   }
   if (nodemon) {
+    packageJson.devDependencies = packageJson.devDependencies || {};
     packageJson.devDependencies.nodemon = "^2.0.12";
   }
 
