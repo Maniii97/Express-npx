@@ -3,7 +3,7 @@
 import inquirer from "inquirer";
 import fs from "fs";
 import path from "path";
-import {mkdirp} from "mkdirp";
+import mkdirp from "mkdirp";
 import chalk from "chalk";
 import figlet from "figlet";
 import { execSync } from "child_process";

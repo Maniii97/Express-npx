@@ -5,7 +5,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-express-i-ms-cli is a command-line interface (CLI) tool for quickly generating Express.js projects with customizable options.
+express-i-ms-cli is a command-line interface (CLI) tool for quickly generating Express.js projects with multiple customizable options.
 
 ## Installation
 
@@ -16,10 +16,45 @@ To install :
 npm i express-i-ms-cli
 ```
 
+Help command : 
+```bash
+npx express-i-ms -h
+```
+OR
+```bash
+npx express-i-ms --help
+```
+
+Version command : 
+```bash
+npx express-i-ms -v
+```
+OR
+```bash
+npx express-i-ms --version
+```
+
 Make an empty folder, Run the following command to get the boilerplate express app with MVC architecture pattern.
 ```bash
 npx express-i-ms
 ```
+## This will make your app in this format:
+
+your-project-name/
+├── src/
+│   ├── app.ts
+│   ├── routes/
+│   ├── controllers/
+│   ├── models/
+│   ├── middlewares/
+│   └── configs/
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── package.json
+├── tsconfig.json
+
 
 ## Features
 
@@ -30,7 +65,7 @@ npx express-i-ms
 - Option to include .gitignore file.
 - Option to get ts-config.json file.
 - Option to use nodemon.
+- Option to add a DockerFile
 
 
-
-Feel free to raise an issue and contribute to this package [Github](https://github.com/Maniii97/Express-npx)
+Feel free to raise an issue and contribute to this package on [Github](https://github.com/Maniii97/Express-npx)
