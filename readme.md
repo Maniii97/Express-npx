@@ -38,12 +38,12 @@ Make an empty folder, Run the following command to get the boilerplate express a
 ```bash
 npx express-i-ms
 ```
-## This will make your app in this format:
+## This is how your project structure will look like:
 
 ```
 ${projectName}/
 ├── src/
-│   ├── app.${ext}
+│   ├── app.ts
 │   ├── routes/
 │   ├── controllers/
 │   ├── models/
@@ -55,9 +55,8 @@ ${projectName}/
 ├── LICENSE
 ├── README.md
 ├── package.json
-${language === 'TypeScript' ? '├── tsconfig.json\n' : ''}
+├── tsconfig.json
 ```
-
 
 ## Features
 
