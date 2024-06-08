@@ -40,7 +40,7 @@ npx express-i-ms
 ```
 ## This will make your app in this format:
 
-\`\`\`
+```
 ${projectName}/
 ├── src/
 │   ├── app.${ext}
@@ -56,7 +56,7 @@ ${projectName}/
 ├── README.md
 ├── package.json
 ${language === 'TypeScript' ? '├── tsconfig.json\n' : ''}
-\`\`\`
+```
 
 
 ## Features
